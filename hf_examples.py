@@ -29,10 +29,10 @@ def test_cg(n=500):
   hf.batch_Gv = lambda v: numpy.dot(A, v)
   b = numpy.random.random(n)
   c, x, j, i = hf.cg(b)
-  print
+  print()
 
-  print 'error on b =', abs(numpy.dot(A, x) - b).mean()
-  print 'error on x =', abs(numpy.linalg.solve(A, b) - x).mean()
+  print('error on b =', abs(numpy.dot(A, x) - b).mean())
+  print('error on x =', abs(numpy.linalg.solve(A, b) - x).mean())
 
 
 def sgd_optimizer(p, inputs, costs, train_set, lr=1e-4):
@@ -43,15 +43,15 @@ def sgd_optimizer(p, inputs, costs, train_set, lr=1e-4):
   f = theano.function(inputs, costs, updates=updates)
   
   try:
-    for u in xrange(1000):
+    for u in range(1000):
       cost = []
       for i in train_set.iterate(True):
         cost.append(f(*i))
-      print 'update %i, cost=' %u, numpy.mean(cost, axis=0)
+      print('update %i, cost=' %u, numpy.mean(cost, axis=0))
       sys.stdout.flush()
 
   except KeyboardInterrupt: 
-    print 'Training interrupted.'
+    print('Training interrupted.')
 
 
 # feed-forward neural network with sigmoidal output
@@ -62,7 +62,7 @@ def simple_NN(sizes=(784, 100, 10)):
   p = []
   y = x
 
-  for i in xrange(len(sizes)-1):
+  for i in range(len(sizes)-1):
     a, b = sizes[i:i+2]
     Wi = theano.shared((10./numpy.sqrt(a+b) * numpy.random.uniform(-1, 1, size=(a, b))).astype(theano.config.floatX))
     bi = theano.shared(numpy.zeros(b, dtype=theano.config.floatX))
@@ -81,14 +81,14 @@ def example_NN(hf=True):
   p, inputs, s, costs = simple_NN((2, 50, 40, 30, 1))
 
   xor_dataset = [[], []]
-  for i in xrange(50000):
+  for i in range(50000):
     x = numpy.random.randint(0, 2, (50, 2))
     t = (x[:, 0:1] ^ x[:, 1:2]).astype(theano.config.floatX)
     x = x.astype(theano.config.floatX)
     xor_dataset[0].append(x)
     xor_dataset[1].append(t)
 
-  training_examples = len(xor_dataset[0]) * 3/4
+  training_examples = len(xor_dataset[0]) * 3//4
   train = [xor_dataset[0][:training_examples], xor_dataset[1][:training_examples]]
   valid = [xor_dataset[0][training_examples:], xor_dataset[1][training_examples:]]
 
@@ -136,7 +136,7 @@ def example_RNN(hf=True):
   p, inputs, s, costs, h, ha = simple_RNN(100)
 
   memorization_dataset = [[]]  # memorize the first unit for 100 time-steps with binary noise
-  for i in xrange(100000):
+  for i in range(100000):
     memorization_dataset[0].append(numpy.random.randint(2, size=(100, 1)).astype(theano.config.floatX))
 
   train = [memorization_dataset[0][:-1000]]
@@ -151,4 +151,5 @@ def example_RNN(hf=True):
   else:
     sgd_optimizer(p, inputs, costs, gradient_dataset, lr=5e-5)    
 
-
+if __name__ == '__main__':
+    example_NN()
